@@ -11,11 +11,12 @@ object MultiplierServer {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        val bossGroup = NioEventLoopGroup()
-        val workerGroup = NioEventLoopGroup()
+        val bossGroup = NioEventLoopGroup(4)
+        val workerGroup = NioEventLoopGroup(512)
         try {
             val b = ServerBootstrap()
             b.option(ChannelOption.SO_BACKLOG, 1024)
+            b.option(ChannelOption.TCP_NODELAY, true)
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel::class.java)
                     .childHandler(HttpHelloWorldServerInitializer())

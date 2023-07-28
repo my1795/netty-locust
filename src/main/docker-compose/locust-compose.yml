@@ -15,8 +15,8 @@ services:
       - ./:/mnt/locust
     command: -f /mnt/locust/locustfile.py --worker --master-host master
 
-  quark-app:
+  netty-app:
     build:
       context: ./../../../
       dockerfile: ./src/main/docker/Dockerfile.native-micro
-    image: quark-app
+    image: netty-app

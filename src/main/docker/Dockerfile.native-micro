@@ -17,14 +17,26 @@
 # docker run -i --rm -p 8080:8080 quarkus/code-with-quarkus
 #
 ###
-FROM quay.io/quarkus/quarkus-micro-image:2.0
+
+
+FROM maven:3.8.1-openjdk-17-slim AS maven-builder
+WORKDIR /build
+COPY ./ .
+RUN mvn package
+
+FROM ghcr.io/graalvm/graalvm-community:20.0.1-ol9 AS graal-builder
+WORKDIR /build
+COPY target/multiplier-netty-jar-with-dependencies.jar .
+RUN native-image -cp multiplier-netty-jar-with-dependencies.jar multiplier.MultiplierServer -o multiplier-netty
+
+FROM ubuntu:22.04
 WORKDIR /work/
 RUN chown 1001 /work \
     && chmod "g+rwX" /work \
     && chown 1001:root /work
-COPY --chown=1001:root build/*-runner /work/application
+COPY --from=graal-builder /build/multiplier-netty  /work/application
 
 EXPOSE 9595
 USER 1001
 
-CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]
+CMD ["./application"]

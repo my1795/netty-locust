@@ -5,7 +5,7 @@ import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.*
 
 
-class HttpHelloWorldServerHandler : SimpleChannelInboundHandler<HttpObject?>() {
+class MultiplierServerHandler : SimpleChannelInboundHandler<HttpObject?>() {
     override fun channelReadComplete(ctx: ChannelHandlerContext) {
         ctx.flush()
     }
